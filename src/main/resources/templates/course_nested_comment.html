@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://kit.fontawesome.com/ecd6486686.js"></script>
+
+    <title>JavaSchool</title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">JavaSchool</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/courses">Courses</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/tasks">Tasks</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/login?logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-text">
+        <span th:text="${currentUser.getName()}"></span>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1 th:text="${course.caption}"/>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card" th:if="${materials}" th:each="material : ${materials}" style="margin-top: 10px">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <p th:text="${{material.getAuthor().getName()}} + ' '+ ${{material.getAuthor().getSurname()}}"></p>
+                            <h5 th:text="${{material.title}}"></h5>
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <i th:text="${#temporals.format(material.getCreateDate(), 'dd-MM-yyyy HH:mm')}" style="font-size: 10px"></i>
+                            <div class="btn-group" role="group" aria-label="Basic example" th:if="${canCreate}">
+                                <form action="#"
+                                      th:action= "@{'/course/{idCourse}/edit/{idMaterial}'(idCourse=${course.getId()}, idMaterial=${material.getId()})}"
+                                      th:method="get" >
+                                    <input type="hidden" name="_method" value="get" />
+                                    <button type="submit" class="btn btn-light" id="editButton"><i class="fas fa-pencil-alt"></i></button>
+                                </form>
+                                <form action="#"
+                                      th:action= "@{'/course/{idCourse}/delete/{idMaterial}'(idCourse=${course.getId()}, idMaterial=${material.getId()})}"
+                                      th:method="delete" >
+                                    <input type="hidden" name="_method" value="delete" />
+                                    <button type="submit" class="btn btn-light" id="deleteButton"><i class="fas fa-trash-alt"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p th:text="${material.getText()}"></p>
+                </div>
+                <div class="card-footer bg-transparent border-success">
+                    <h6>Комментарии</h6>
+                    <div class="card" th:each="comment : ${material.getComments()}">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <p th:text="${{comment.getAuthor().getName()}} + ' '+ ${{comment.getAuthor().getSurname()}}"></p>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <i th:text="${#temporals.format(comment.getCreatedate(), 'dd-MM-yyyy HH:mm')}" style="font-size: 10px"></i>
+                                    <div class="btn-group" role="group" aria-label="Basic example" th:if="${comment.getAuthor().equals(currentUser)}">
+                                        <form action="#"
+                                              th:action= "@{'/course/{idCourse}/edit_comment/{idComment}'(idCourse=${course.getId()}, idComment=${comment.getId()})}"
+                                              th:method="get" >
+                                            <input type="hidden" name="_method" value="get" />
+                                            <button type="submit" class="btn btn-light" id="editComment"><i class="fas fa-pencil-alt"></i></button>
+                                        </form>
+                                        <form action="#"
+                                              th:action= "@{'/course/{idCourse}/delete_comment/{idComment}'(idCourse=${course.getId()}, idComment=${comment.getId()})}"
+                                              th:method="delete" >
+                                            <input type="hidden" name="_method" value="delete" />
+                                            <button type="submit" class="btn btn-light" id="deleteComment"><i class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p th:text="${comment.getText()}"></p>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="card" th:if="${comment.getComments()}" th:each="childComment : ${comment.getComments()}" th:remove="tag">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <p th:text="${{childComment.getAuthor().getName()}} + ' '+ ${{childComment.getAuthor().getSurname()}}"></p>
+                                        </div>
+                                        <div class="col-md-2 text-center">
+                                            <i th:text="${#temporals.format(childComment.getCreatedate(), 'dd-MM-yyyy HH:mm')}" style="font-size: 10px"></i>
+                                            <div class="btn-group" role="group" aria-label="Basic example" th:if="${childComment.getAuthor().equals(currentUser)}">
+                                                <form action="#"
+                                                      th:action= "@{'/course/{idCourse}/edit_comment/{idComment}'(idCourse=${course.getId()}, idComment=${childComment.getId()})}"
+                                                      th:method="get" >
+                                                    <input type="hidden" name="_method" value="get" />
+                                                    <button type="submit" class="btn btn-light" id="editChComment"><i class="fas fa-pencil-alt"></i></button>
+                                                </form>
+                                                <form action="#"
+                                                      th:action= "@{'/course/{idCourse}/delete_comment/{idComment}'(idCourse=${course.getId()}, idComment=${childComment.getId()})}"
+                                                      th:method="delete" >
+                                                    <input type="hidden" name="_method" value="delete" />
+                                                    <button type="submit" class="btn btn-light" id="deleteChComment"><i class="fas fa-trash-alt"></i></button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body border-success">
+                                    <p th:text="${childComment.getText()}"></p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="colLast">
+                                    <a href="#subcomment" class="btn btn-link btn-sm" data-toggle="collapse">Комментировать</a>
+                                    <div id="subcomment" class="alert alert-secondary collapse" role="alert" style="margin-top: 5px">
+                                        <form class="form-inline" th:action="@{'/course/{idCourse}/comment/{idMaterial}/{idComment}'
+                                              (idCourse=${course.getId()}, idMaterial=${material.getId()}, idComment=${comment.getId()})}"
+                                              th:method="post">
+                                            <div class="form-group md-10">
+                                                <label for="text" class="sr-only">Комментарий</label>
+                                                <textarea name="text" class="form-control" style="width: 500px; margin-left: 5px" id="text1" rows="2" required></textarea>
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            </div>
+                                            <button type="submit" style="margin-left: 20px" class="btn btn-primary mb-2">Отправить</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-secondary" role="alert" style="margin-top: 5px">
+                        <form class="form-inline" th:action="@{'/course/{idCourse}/comment/{idMaterial}'(idCourse=${course.getId()}, idMaterial=${material.getId()})}"
+                              th:method="post">
+                            <div class="form-group md-10">
+                                <label for="text" class="sr-only">Комментарий</label>
+                                <textarea name="text" class="form-control" style="width: 500px; margin-left: 5px" id="text" rows="2" required></textarea>
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            </div>
+                            <button type="submit" style="margin-left: 20px" class="btn btn-primary mb-2">Отправить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card" th:if="${canCreate}" style="margin-top: 10px">
+                <div class="card-header">
+                    <h5>Управление</h5>
+                </div>
+                <div class="card-body text-center">
+                    <button type="button" class="btn btn-light"><i class="fas fa-book"></i> Новый материал</button>
+                    <button type="button" class="btn btn-light"><i class="fas fa-tasks"></i> Новое задание</button>
+                </div>
+            </div>
+            <div class="card" th:if="${teachers}" style="margin-top: 10px">
+                <div class="card-header">
+                    <h5>Преподаватели</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" th:each="teacher : ${teachers}">
+                        <span th:text="${teacher.getUser().getName()} + ' ' + ${teacher.getUser().getSurname()}"></span>
+                    </li>
+                </ul>
+            </div>
+            <div class="card" th:unless="${teachers}" style="margin-top: 10px">
+                <div class="card-body text-center">
+                    <p>Нет преподавателей</p>
+                </div>
+            </div>
+
+            <div class="card" th:if="${students}" style="margin-top: 10px">
+                <div class="card-header">
+                    <h5>Студенты</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" th:each="student : ${students}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <span th:text="${student.getUser().getName()} + ' ' + ${student.getUser().getSurname()}"></span>
+                            </div>
+                            <div class="col-md-4 text-center" th:if="${canCreate}">
+                                <form action="#"
+                                      th:action="@{'/administration/course/{idCourse}/delete/{idCourseUser}'
+                                        (idCourse=${course.id}, idCourseUser=${student.getId()})}"
+                                      th:method="delete" >
+                                    <input type="hidden" name="_method" value="delete" />
+                                    <button type="submit" class="btn btn-light" id="submitButton"><i class="fas fa-user-slash"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="card" th:unless="${teachers}" style="margin-top: 5px">
+                <div class="card-body text-center">
+                    <p>Нет студентов</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</body>
+</html>

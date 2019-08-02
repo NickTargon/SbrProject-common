@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Редактировать материал</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+    <form
+            th:action= "@{'/course/{id}/edit/{idMaterial}'(id=${course.getId()}, idMaterial=${material.getId()})}"
+            th:method="post">
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="title">Название</label>
+                <input class="form-control" type="text" name="title" id="title" th:value="${material.getTitle()}"/>
+            </div>
+            <div class="form-group">
+                <label for="text">Содержание</label>
+                <textarea class="form-control" type="text" name="text" id="text" th:text="${material.getText()}"></textarea>
+            </div>
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </div>
+    </form>
+</html>

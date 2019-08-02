@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="add_parent_to_publication_comments" author="Targon Nikolai" context="4.0">
+        <comment>Добавление поля предка в таблицу комментариев публикаций</comment>
+        <sql>
+            ALTER TABLE `sbr_testdb`.`edu_publication_comment`
+            ADD `parent` BIGINT NULL,
+            ADD FOREIGN KEY (`parent`) REFERENCES edu_publication_comment(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+        </sql>
+        <rollback>
+            <sql>
+                ALTER TABLE `sbr_testdb`.`edu_publication_comment`
+                DROP DROP FOREIGN KEY `edu_publication_comment_ibfk_3`,
+                DROP COLUMN `parent`;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="add_parent_to_task_comments" author="Targon Nikolai" context="4.0">
+        <comment>Добавление поля предка в таблицу комментариев заданий</comment>
+        <sql>
+            ALTER TABLE `sbr_testdb`.`edu_task_comment`
+            ADD `parent` BIGINT NULL,
+            ADD FOREIGN KEY (`parent`) REFERENCES edu_task_comment(`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+        </sql>
+        <rollback>
+            <sql>
+                ALTER TABLE `sbr_testdb`.`edu_task_comment`
+                DROP DROP FOREIGN KEY `edu_task_comment_ibfk_3`,
+                DROP COLUMN `parent`;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

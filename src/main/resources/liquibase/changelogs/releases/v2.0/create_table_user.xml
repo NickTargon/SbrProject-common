@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_table_user" author="Zatirko Yuriy" context="2.0">
+        <comment>Создание таблицы courses</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_user` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `login` VARCHAR(45) NULL,
+            `password` VARCHAR(45) NULL,
+            `name` VARCHAR(45) NULL,
+            `surname` VARCHAR(45) NULL,
+            `regdate` DATE NULL,
+            `phone` VARCHAR(11) NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

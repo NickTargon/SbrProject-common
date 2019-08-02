@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+	        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <include file="drop_tables.xml" relativeToChangelogFile="true"/>
+    <include file="recreate_tables.xml" relativeToChangelogFile="true"/>
+    <include file="add_user_roles.xml" relativeToChangelogFile="true"/>
+    <include file="recreate_course_user.xml" relativeToChangelogFile="true"/>
+    <include file="change_table_user_add_email.xml" relativeToChangelogFile="true"/>
+    <include file="change_table_publication.xml" relativeToChangelogFile="true"/>
+    <include file="replace_curmark_to_usertask.xml" relativeToChangelogFile="true"/>
+    <include file="add_files.xml" relativeToChangelogFile="true"/>
+    <include file="refactor_publications.xml" relativeToChangelogFile="true"/>
+    <include file="add_table_material.xml" relativeToChangelogFile="true"/>
+    <include file="return_to_single_table_publication.xml" relativeToChangelogFile="true"/>
+    <include file="add_parents_to_comments.xml" relativeToChangelogFile="true"/>
+    <include file="another_refactor_publications.xml" relativeToChangelogFile="true"/>
+    <include file="change_publications_add_edit.xml" relativeToChangelogFile="true"/>
+    <include file="change_comments_add_edit.xml" relativeToChangelogFile="true"/>
+    <include file="change_table_user_phone.xml" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

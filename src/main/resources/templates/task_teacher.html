@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/ecd6486686.js"></script>
+
+    <title>JavaSchool</title>
+</head>
+<body>
+<div th:with="user = ${currentUser}" th:include="fragments/navbar-simple"></div>
+
+<div class="container mt-5">
+    <h5 th:text="Задание"/>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card" style="margin-top: 10px">
+                <div class="card-header">
+                    <h5 th:text="${task.getTitle()}"></h5>
+                </div>
+                <div class="card-body">
+                    <p th:text="'Курс: '+${course.getCaption()}"></p>
+                    <p th:text="'Максимальная оценка: '+${task.getTaskInfo().getMaxMark()}"></p>
+                    <p th:text="'Выполнить до: '+${#temporals.format(task.getTaskInfo().getCompleteTime(), 'dd-MM-yyyy HH:mm')}"></p>
+                    <p th:if="${usertask.getTaskState().name().equals('SUBMITTED') || usertask.getTaskState().name().equals('RATED')}"
+                       th:text="'Сдано: '+${#temporals.format(usertask.getSubmittedDate(), 'dd-MM-yyyy HH:mm')}"></p>
+                    <p th:text="'Студент: '+${usertask.getUser().getName() + ' ' + usertask.getUser().getSurname() + ' [' + usertask.getUser().getLogin() + ']'}"></p>
+                    <p th:text="${task.getText()}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card" style="margin-top: 10px">
+                <div class="card-header">
+                    <h5>Проверка работы</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div th:if="${usertask.getTaskState().name().equals('ASSIGNED')}">
+                        <div class="alert alert-primary" role="alert">
+                            <p>Еще не сдано</p>
+                        </div>
+                    </div>
+                    <div th:if="${usertask.getTaskState().name().equals('SUBMITTED')}">
+                        <div>Файлы, прикрепленные к заданию</div>
+                        <div th:if="${pubFiles}">
+                            <div th:each="pfile : ${pubFiles}">
+                                <div class="badge badge-primary text-wrap m-1" style="width: 6rem; color: white">
+                                    <a target="_blank" th:href="@{'/files/{filename}' (filename=${pfile.getFilename()})}">
+                                        <span style="color: white" th:text="${pfile.getFilename().split('_')[1]}"></span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#setMark"><i
+                                class="fas fa-check"></i> Принять работу
+                        </button>
+                    </div>
+                    <div th:if="${usertask.getTaskState().name().equals('RATED')}">
+                        <div class="alert alert-success" role="alert">
+                            <p>Работа проверена! Оценка: <i th:text="${usertask.getCurMark()}"/></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-success">
+                    <h6>Комментарии</h6>
+                    <div class="card" th:each="comment : ${usertask.getComments()}">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <p th:text="${{comment.getAuthor().getName()}} + ' '+ ${{comment.getAuthor().getSurname()}}"></p>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <i th:text="${#temporals.format(comment.getCreateDate(), 'dd-MM-yyyy HH:mm')}"
+                                       style="font-size: 10px"></i>
+                                    <div class="btn-group" role="group" aria-label="Basic example"
+                                         th:if="${comment.getAuthor().equals(currentUser)}">
+                                        <button th:href="@{'/course/{idCourse}/tasks/{idTask}/edit_comment/{idComment}'(idCourse=${course.getId()}, idComment=${comment.getId()}, idTask=${task.getId()})}"
+                                                class="btn btn-light li-modal" id="editComment"><i
+                                                class="fas fa-pencil-alt"></i></button>
+                                        <form action="#"
+                                              th:action="@{'/course/{idCourse}/tasks/{idTask}/delete_comment/{idComment}'(idCourse=${course.getId()}, idComment=${comment.getId()}, idTask=${task.getId()})}"
+                                              th:method="delete">
+                                            <input type="hidden" name="_method" value="delete"/>
+                                            <button type="submit" class="btn btn-light" id="deleteComment"><i
+                                                    class="fas fa-trash-alt"></i></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p th:text="${comment.getText()}"></p>
+                        </div>
+                    </div>
+                    <div class="alert alert-secondary" role="alert" style="margin-top: 5px">
+                        <form class="form-inline" th:action="@{'/course/{idCourse}/tasks/{idTask}/comment'
+                                (idCourse=${course.getId()}, idTask=${task.getId()})}"
+                              th:method="post">
+                            <div class="form-group md-10">
+                                <label for="text" class="sr-only">Комментарий</label>
+                                <textarea name="text" class="form-control" style="width: 500px; margin-left: 5px"
+                                          id="text" rows="2" required></textarea>
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            </div>
+                            <button type="submit" style="margin-left: 20px" class="btn btn-primary mb-2">Отправить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade text-center" id="setMark">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Проверка задания</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}'
+                      (idCourse=${course.getId()}, idTask=${task.getId()}, idUser=${user.getId()},
+                      taskCaption=${task.getTitle()})}"
+                  method="post">
+                <div class="modal-body">
+                    <input type="number" class="form-control" name="curMark" placeholder="Оценка" required>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Принять работу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade text-center" id="modalDialog">
+    <div class="modal-dialog">
+        <div class="modal-content"></div>
+    </div>
+</div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script>
+</body>
+</html>

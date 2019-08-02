@@ -5,6 +5,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
 <p th:text="'Hello, ' + ${name} + '!'" />
 </body>
 </html>

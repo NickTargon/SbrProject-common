@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="recreate_table_edu_publication" author="Targon Nokolai" context="4.0">
+        <comment>Пересоздание таблицы publication</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_publication` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `dtype` VARCHAR(10) NOT NULL,
+            `course` BIGINT NOT NULL,
+            `author` BIGINT NOT NULL,
+            `title` VARCHAR(255) NULL,
+            `text` LONGTEXT NULL,
+            `createdate` DATETIME NULL,
+            `compltime` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`course`) REFERENCES edu_course(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`author`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="recreate_table_edu_publication_comment" author="Targon Nokolai" context="4.0">
+        <comment>Пересоздание таблицы publication_comment</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_publication_comment` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `publication` BIGINT NOT NULL,
+            `author` BIGINT NOT NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`publication`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`author`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication_comment;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="recreate_table_edu_user_task" author="Targon Nokolai" context="4.0">
+        <comment>Пересоздание таблицы user_task</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_user_task` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `task` BIGINT NOT NULL,
+            `user` BIGINT NOT NULL,
+            `submitteddate` DATETIME NULL,
+            `taskstate` VARCHAR(24),
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`task`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`user`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="recreate_table_edu_task_comment" author="Targon Nokolai" context="4.0">
+        <comment>Пересоздание таблицы task_comment</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_task_comment` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `usertask` BIGINT NOT NULL,
+            `author` BIGINT NOT NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`usertask`) REFERENCES edu_user_task(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`author`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

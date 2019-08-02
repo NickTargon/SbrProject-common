@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit material</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{'/course/{idCourse}/tasks/{idTask}'
+      (idCourse=${idCourse}, idTask=${idTask})}">Back</a></p>
+<div>
+    <form
+            th:action= "@{'/course/{idCourse}/tasks/{idTask}/edit_comment/{idComment}'
+                        (idCourse=${idCourse}, idTask=${idTask}, idComment=${comment.getId()})}"
+            th:method="post">
+        <div><label> Text: <textarea type="text" name="text" th:text="${comment.getText()}"></textarea></label></div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div><input type="submit" value="Edit"/></div>
+    </form>
+</div>
+
+</body>
+</html>

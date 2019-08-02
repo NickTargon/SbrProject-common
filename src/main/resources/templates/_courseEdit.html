@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit course</title>
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{/administration}">Back</a></p>
+<div>
+    <span th:text="${course.caption}"></span>
+</div>
+<div>
+    <form th:action="@{'/administration/course/{id}'(id=${course.id})}" method="post">
+        <div><label> Caption: <input type="text" name="caption" placeholder="Введите новое имя"/> </label></div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div><input type="submit" value="Change caption"/></div>
+    </form>
+</div>
+
+<div th:if="${!allUsers.isEmpty()}">
+    <form th:action="@{'/administration/course/{id}/add'(id=${course.id})}" method="post">
+<!--        <div><label> User name: <input type="text" name="userName" placeholder="Введите имя"/> </label></div>-->
+        <div>
+            <select th:name="userName">
+                <option th:each="user : ${allUsers}"
+                        th:value="${user.getLogin()}"
+                        th:text="${user.getLogin()}"></option>
+            </select>
+        </div>
+        <div><ul>
+            <li th:each="role : ${roles}">
+                <input type="radio" th:name="userRole" th:value="${role}"/>
+                <label th:text="${role}"></label>
+            </li>
+        </ul></div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div><input type="submit" value="Add user"/></div>
+    </form>
+</div>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th> User </th>
+            <th> Role </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${courseusers.isEmpty()}">
+            <td colspan="2"> No users </td>
+        </tr>
+        <tr th:each="courseuser : ${courseusers}">
+            <td><span th:text="${courseuser.getUser().getLogin()}"> User </span></td>
+            <td><span th:text="${courseuser.getRole()}"> Role </span></td>
+            <td><form action="#"
+                      th:action="@{'/administration/course/{idCourse}/delete/{idCourseUser}'
+                      (idCourse=${course.id}, idCourseUser=${courseuser.getId()})}"
+                      th:method="delete" >
+                <input type="hidden" name="_method" value="delete" />
+                <button type="submit" id="submitButton">Delete</button>
+            </form></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

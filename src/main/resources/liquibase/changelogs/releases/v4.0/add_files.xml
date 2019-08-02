@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_table_files" author="Nikolai Targon" context="4.0">
+        <comment>Создание таблицы files</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_files` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `user` BIGINT NOT NULL,
+            `publication` BIGINT NOT NULL,
+            `filename` VARCHAR(255) NOT NULL,
+            `path` VARCHAR(255) NULL,
+            `filetype` VARCHAR(5) NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`publication`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`user`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_files;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

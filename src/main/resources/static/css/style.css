@@ -1,0 +1,21 @@
+.main-section {
+    margin: 0 auto;
+    margin-top: 130px;
+    padding: 0;
+}
+.modal-content {
+    background-color: #434e5a;
+    opacity: .8;
+    padding: 10px 18px;
+}
+.error-section {
+    background-color: transparent;
+    border: none;
+    width: 500px;
+    opacity: 1;
+    color: black;
+}
+.error-section img {
+    width: 200px;
+    height: 200px;
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="change_table_user_add_email" author="Romanova Anastasiya" context="4.0">
+        <comment>Добавление поля email</comment>
+        <addColumn tableName="edu_user">
+            <column name="email" type="varchar(45)"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="change_table_user_add_actcode" author="Romanova Anastasiya" context="4.0">
+        <comment>Добавление поля activation_code</comment>
+        <addColumn tableName="edu_user">
+            <column name="actcode" type="varchar(255)"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

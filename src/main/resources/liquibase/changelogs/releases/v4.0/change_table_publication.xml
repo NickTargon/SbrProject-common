@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="change_table_publication_add_max_mark" author="Romanova Anastasiya" context="4.0">
+        <comment>Добавление поля макс_оценка</comment>
+        <addColumn tableName="edu_publication">
+            <column name="maxmark" type="bigint"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="change_table_publication_add_cur_mark" author="Romanova Anastasiya" context="4.0">
+        <comment>Добавление поля текущая оценка</comment>
+        <addColumn tableName="edu_publication">
+            <column name="curmark" type="bigint"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

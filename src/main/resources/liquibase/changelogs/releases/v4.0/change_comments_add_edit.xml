@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="change_table_edu_publication_comment_add_edited" author="Targon Nikolai" context="4.0">
+        <comment>Добавление поля макс_оценка</comment>
+        <delete tableName="edu_publication_comment">
+            <where>id > 0</where>
+        </delete>
+        <addColumn tableName="edu_publication_comment">
+            <column name="edited" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE edu_publication_comment DROP edited;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="change_table_edu_task_comment_add_edited" author="Targon Nikolai" context="4.0">
+        <comment>Добавление поля макс_оценка</comment>
+        <delete tableName="edu_task_comment">
+            <where>id > 0</where>
+        </delete>
+        <addColumn tableName="edu_task_comment">
+            <column name="edited" type="boolean" defaultValueBoolean="false"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE edu_task_comment DROP edited;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

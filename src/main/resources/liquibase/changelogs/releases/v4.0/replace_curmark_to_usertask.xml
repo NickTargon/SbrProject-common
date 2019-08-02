@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="change_table_edu_usertask_add_curmark" author="Romanova Anastasiya" context="4.0">
+        <comment>Добавление поля текущая оценка в таблицу юзертаск</comment>
+        <addColumn tableName="edu_user_task">
+            <column name="curmark" type="bigint"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="change_table_publication_del_curmark" author="Romanova Anastasiya" context="4.0">
+        <comment>Удаление поля текущая оценка из таблицы публикация</comment>
+        <dropColumn columnName="curmark"
+                    tableName="edu_publication"/>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_table_edu_course" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы course</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_course` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `caption` VARCHAR(255) NULL,
+            `createdate` DATE NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_course;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_user_role" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы user_role</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_user_role` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `role` VARCHAR(24) NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_role;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_course_user" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы course_user</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_course_user` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `course` BIGINT NOT NULL,
+            `user` BIGINT NOT NULL,
+            `role` BIGINT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`course`) REFERENCES edu_course(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`user`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`role`) REFERENCES edu_user_role(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_course_user;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_publication" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы publication</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_publication` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `course` BIGINT NOT NULL,
+            `creator` BIGINT NOT NULL,
+            `title` VARCHAR(255) NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`course`) REFERENCES edu_course(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`creator`) REFERENCES edu_course_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_publication_comment" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы publication_comment</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_publication_comment` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `publication` BIGINT NOT NULL,
+            `creator` BIGINT NOT NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`publication`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`creator`) REFERENCES edu_course_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_publication_comment;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_task" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы task</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_task` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `course` BIGINT NOT NULL,
+            `creator` BIGINT NOT NULL,
+            `title` VARCHAR(255) NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            `compltime` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`course`) REFERENCES edu_course(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`creator`) REFERENCES edu_course_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_user_task" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы user_task</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_user_task` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `task` BIGINT NOT NULL,
+            `user` BIGINT NOT NULL,
+            `submitteddate` DATETIME NULL,
+            `taskstate` VARCHAR(24),
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`task`) REFERENCES edu_task(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`user`) REFERENCES edu_course_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="create_table_edu_task_comment" author="Targon Nokolai" context="2.0">
+        <comment>Создание таблицы task_comment</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_task_comment` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `usertask` BIGINT NOT NULL,
+            `creator` BIGINT NOT NULL,
+            `text` LONGTEXT,
+            `createdate` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`usertask`) REFERENCES edu_user_task(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`creator`) REFERENCES edu_course_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE edu_user_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

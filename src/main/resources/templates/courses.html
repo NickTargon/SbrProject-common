@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/ecd6486686.js"></script>
+
+    <title>JavaSchool</title>
+</head>
+<body>
+<div th:with="user = ${currentUser}" th:include="fragments/navbar-simple"></div>
+
+<div class="container mt-5">
+    <h1>Мои курсы</h1>
+    <div th:if="${!courses.isEmpty()}">
+    <div class="card" th:if="${courses}" th:each="course : ${courses}" style="margin-top: 5px">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-11">
+                    <h5 th:text="${{course.course.caption}}"></h5>
+                </div>
+                <div class="col-md-1">
+                    <i th:text="'#' +${{course.course.id}}"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-10">
+                    <p th:text="'Участников: ' +${{coursesInfo.get(course.course.id)['usersCount']}}"></p>
+                    <p th:text="'Опубликовано материалов: ' +${{coursesInfo.get(course.course.id)['materialsCount']}}"></p>
+                </div>
+                <div class="col-md-2">
+                    <a th:href="@{/course/{id}(id=${course.course.id})}" class="btn btn-primary">На страницу курса</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="card text-center" th:unless="${!courses.isEmpty()}">
+        <div class="card-body">
+            <p>Твой список курсов пока пуст</p>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

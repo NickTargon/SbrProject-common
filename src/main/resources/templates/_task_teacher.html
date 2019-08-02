@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My task</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{'/course/{id}/tasks/{idTask}'(id=${course.getId()}, idTask=${task.getId()})}">All tasks</a></p>
+<div th:text="${course.caption}"></div>
+Student <b><span th:text="${usertask.getUser().getName()}"></span></b>
+<div>Файлы, прикрепленные к заданию</div>
+<div th:if="${pubFiles}">
+    <div th:each="pfile : ${pubFiles}">
+        <a th:href="@{'/files/{filename}' (filename=${pfile.getFilename()})}">
+            <span th:text="${pfile.getFilename().split('_')[1]}"></span>
+        </a>
+    </div>
+</div>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th> Task caption</th>
+            <th> Task text</th>
+            <th> Submitted date</th>
+            <th> Max mark</th>
+            <th> User mark</th>
+            <th> Task state</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td><b><span th:text="${task.getTitle()}"> Title</span></b></td>
+            <td><span th:text="${task.getText()}"> Text </span></td>
+            <td><span th:text="${#temporals.format(usertask.getSubmittedDate(), 'dd-MM-yyyy HH:mm:ss')}">
+                                Submitted date
+                </span>
+            </td>
+            <td>Max mark: <span th:text="${task.getTaskInfo().getMaxMark()}"> Max Mark </span></td>
+            <td>My mark:
+                <span th:if="${usertask.getTaskState()}">
+                    <p th:text="${usertask.curMark}"></p>
+                </span>
+            </td>
+            <td>Task state:
+                <span th:if="${usertask.getTaskState()}">
+                    <p th:text="${usertask.getTaskState()}"></p>
+                </span>
+            </td>
+            <td>Submit date:
+                <span th:if="${usertask.getSubmittedDate()}">
+                    <p th:text="${usertask.getSubmittedDate()}"></p>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}'
+                      (idCourse=${course.getId()}, idTask=${task.getId()}, idUser=${user.getId()},
+                      taskCaption=${task.getTitle()})}"
+                      method="post">
+                    <input type="number" name="curMark">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" id="setMarkButton">Set mark</button>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/comment'
+                      (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                      idUser=${usertask.getUser().getId()})}"
+                      th:method="post">
+                    <div><textarea type="text" name="text" placeholder="Введите комментарий"></textarea></div>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <div><input type="submit" value="Добавить комментарий"/></div>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div th:if="${!usertask.getComments().isEmpty()}">
+                    <table>
+                        <tr th:each="comment : ${usertask.getComments()}">
+                            <table>
+                                <tr>
+                                    <td><span th:text="${comment.getText()}"> Text </span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span th:text="${#temporals.format(comment.getCreateDate(), 'dd-MM-yyyy HH:mm:ss')}">
+                                            Publication date
+                                        </span>
+                                    </td>
+                                    <td><span th:text="${comment.getAuthor().getName()}"> Publisher </span></td>
+                                </tr>
+                                <tr th:if="${comment.getAuthor().equals(currentUser)}">
+                                    <td>
+                                        <form action="#"
+                                              th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/edit_comment/{idComment}'
+                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                              idUser=${usertask.getUser().getId()}, idComment=${comment.getId()})}"
+                                              th:method="get" >
+                                            <input type="hidden" name="_method" value="get" />
+                                            <button type="submit" id="editComment">Edit</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <form action="#"
+                                              th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/comment_delete/{idComment}'
+                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                              idUser=${usertask.getUser().getId()}, idComment=${comment.getId()})}"
+                                              th:method="delete" >
+                                            <input type="hidden" name="_method" value="delete" />
+                                            <button type="submit" id="deleteComment">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <form th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/comment/{idParent}'
+                                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                                              idUser=${usertask.getUser().getId()}, idParent=${comment.getId()})}"
+                                              th:method="post">
+                                            <div><textarea type="text" name="text" placeholder="Введите комментарий"></textarea></div>
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                            <div><input type="submit" value="Добавить комментарий"/></div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:fragment="childcoments" th:remove="tag">
+                                    <table>
+                                        <tr th:each="childcomment : ${comment.getComments()}" >
+                                            <table>
+                                                <tr>
+                                                    <td><span th:text="${childcomment.getText()}"> Text </span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span th:text="${#temporals.format(childcomment.getCreateDate(), 'dd-MM-yyyy HH:mm:ss')}">
+                                                            Publication date
+                                                        </span>
+                                                    </td>
+                                                    <td><span th:text="${childcomment.getAuthor().getName()}"> Publisher </span></td>
+                                                </tr>
+                                                <tr th:if="${childcomment.getAuthor().equals(currentUser)}">
+                                                    <td>
+                                                        <form action="#"
+                                                              th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/edit_comment/{idComment}'
+                                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                                              idUser=${usertask.getUser().getId()}, idComment=${childcomment.getId()})}"
+                                                              th:method="get" >
+                                                            <input type="hidden" name="_method" value="get" />
+                                                            <button type="submit">Edit</button>
+                                                        </form>
+                                                    </td>
+                                                    <td>
+                                                        <form action="#"
+                                                              th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/comment_delete/{idComment}'
+                                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                                              idUser=${usertask.getUser().getId()}, idComment=${childcomment.getId()})}"
+                                                              th:method="delete" >
+                                                            <input type="hidden" name="_method" value="delete" />
+                                                            <button type="submit">Delete</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <form th:action="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}/comment/{idParent}'
+                                                              (idCourse=${course.getId()}, idTask=${task.getId()}, taskCaption=${task.getTitle()},
+                                                              idUser=${usertask.getUser().getId()}, idParent=${childcomment.getId()})}"
+                                                              th:method="post">
+                                                            <div><textarea type="text" name="text" placeholder="Введите комментарий"></textarea></div>
+                                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                                            <div><input type="submit" value="Добавить комментарий"/></div>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                <div th:with="comment = ${childcomment}"
+                                                     th:include=":: childcoments" th:remove="tag">
+                                                </div>
+                                            </table>
+                                        </tr>
+                                    </table>
+                                </tr>
+                            </table>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

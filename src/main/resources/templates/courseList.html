@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="fragments/top"></div>
+    <title>Панель администратора</title>
+</head>
+<div th:replace="fragments/navbar-simple"></div>
+<body>
+<div class="page-information bg-info text-white p-1" style="border: 1px solid gainsboro">
+    <h4>Панель администратора</h4>
+</div>
+
+<form th:action="@{/administration}" method="post" class="mx-auto my-2 my-sm-3 my-lg-4 p-3"
+      style="border: 1px solid gainsboro">
+    <div class="form-group">
+        <label class="label col-xs-2 control-label"> Название курса:
+            <input type="text" name="caption" placeholder="Название" class="form-control col-xs-10"/>
+        </label>
+    </div>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <div><input type="submit" value="Создать курс" class="btn btn-primary col-xs-2"/></div>
+
+    <div th:if="${message}" class="form-group">
+        <span th:utext="${message}" class="mx-auto text-danger"></span>
+    </div>
+</form>
+
+<div class="table-responsive container mt-5">
+    <h3 class="caption">
+        Существующие курсы
+    </h3>
+    <table class="mx-auto my-2 my-sm-3 my-lg-4 p-3 table table-striped table-hover">
+
+        <thead>
+        <tr>
+            <th> Название курса</th>
+            <th> Дата создания</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}">
+            <td><span th:text="${course.caption}" class="lead"> Caption </span></td>
+            <td><span th:text="${#temporals.format(course.getCreateDate(), 'dd-MM-yyyy')}" class="text-center"> CreateDate </span></td>
+            <td>
+                <a th:href="@{'/administration/course/{id}'(id=${course.id})}">Редактировать</a>
+            </td>
+            <td>
+                <form action="#" th:action="@{'/administration/delete/{id}'(id=${course.id})}" th:method="delete">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" id="submitButton" class="btn btn-primary col-xs-2">Удалить курс</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<div th:replace="fragments/bottom"></div>
+</html>

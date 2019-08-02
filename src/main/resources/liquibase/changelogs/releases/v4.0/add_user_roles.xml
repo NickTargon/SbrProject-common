@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="add_user_roles" author="Targon Nokolai" context="4.0">
+        <comment>Добавление ролей</comment>
+        <sql>
+            INSERT INTO `edu_user_role` (`role`) VALUES ('teacher');
+            INSERT INTO `edu_user_role` (`role`) VALUES ('student');
+        </sql>
+        <rollback>
+            <sql>
+                DELETE FROM `edu_user_role`;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

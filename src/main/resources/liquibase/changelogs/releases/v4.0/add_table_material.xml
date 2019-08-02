@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="create_edu_material" author="Targon Nokolai" context="4.0">
+        <comment>Создание таблицы task</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_material` (
+            `id` BIGINT NOT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`id`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE `sbr_testdb`.`edu_task`;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="drop_edu_course_user" author="Targon Nokolai" context="4.0">
+        <dropTable cascadeConstraints="true"
+                   schemaName="sbr_testdb"
+                   tableName="edu_course_user"/>
+    </changeSet>
+
+    <changeSet id="drop_edu_user_role" author="Targon Nokolai" context="4.0">
+        <dropTable cascadeConstraints="true"
+                   schemaName="sbr_testdb"
+                   tableName="edu_user_role"/>
+    </changeSet>
+
+    <changeSet id="recreate_table_edu_course_user" author="Targon Nokolai" context="4.0">
+        <comment>Пересоздание таблицы course_user</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_course_user` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `course` BIGINT NOT NULL,
+            `user` BIGINT NOT NULL,
+            `role` VARCHAR(10) NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`course`) REFERENCES edu_course(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            FOREIGN KEY (`user`) REFERENCES edu_user(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE `edu_course_user`;
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

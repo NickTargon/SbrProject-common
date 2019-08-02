@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="drop_columns_from_publications2" author="Targon Nokolai" context="4.0">
+        <comment>Убираем колонки задания из публикации</comment>
+        <sql>
+            DELETE FROM `sbr_testdb`.`edu_publication`;
+            ALTER TABLE `sbr_testdb`.`edu_publication` DROP `compltime`, DROP `maxmark`;
+        </sql>
+    </changeSet>
+
+    <changeSet id="create_edu_task_info" author="Targon Nokolai" context="4.0">
+        <comment>Создание таблицы task</comment>
+        <sql>
+            CREATE TABLE `sbr_testdb`.`edu_task_info` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT,
+            `compltime` DATETIME,
+            `maxmark` BIGINT,
+            `task_id` BIGINT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`task_id`) REFERENCES edu_publication(`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+            UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+            ENGINE = InnoDB
+            DEFAULT CHARACTER SET = utf8;
+        </sql>
+        <rollback>
+            <sql>
+                DROP TABLE `sbr_testdb`.`edu_task_info`;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{/courses}">Back</a></p>
+<h2>Course</h2>
+<div>
+    <span th:text="${course.caption}"></span>
+</div>
+
+<h3>Tasks</h3>
+
+<div th:if="${canEdit}">
+    <form th:action="@{'/course/{id}/tasks'(id=${course.id})}" method="post">
+        <div><label> Title: <input type="text" name="title" placeholder="Название материала"/> </label></div>
+        <div><label> Text: <textarea type="text" name="text" placeholder="Содержание"></textarea></label></div>
+        <div><label> Maximum mark: <input type="number" name="maxMark" placeholder="Max mark"/></label></div>
+        <div><label>Complete date:
+            <input type="datetime-local" name="completeTime" placeholder="Дата сдачи">
+        </label></div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div><input type="submit" value="Добавить задание"/></div>
+    </form>
+</div>
+<div th:if="${!tasks.isEmpty()}">
+    <table>
+        <tbody>
+        <tr th:each="task : ${tasks}">
+            <td>
+                <table>
+
+                    <tr>
+                        <td th:align="center"><b>
+                            <a th:href="@{'/course/{idCourse}/tasks/{idTask}'
+                            (idCourse=${course.getId()}, idTask=${task.getId()})}" th:text="${task.getTitle()}"> Title
+                            </a></b></td>
+                    </tr>
+                    <tr>
+                        <td><span th:text="${task.getText()}"> Text </span></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span th:if="${task.isEdited()}" th:text="'Изменено ' + ${#temporals.format(task.getCreateDate(), 'dd-MM-yyyy HH:mm:ss')}">
+                                Publication date
+                            </span>
+                            <span th:unless="${task.isEdited()}" th:text="${#temporals.format(task.getCreateDate(), 'dd-MM-yyyy HH:mm:ss')}">
+                                Publication date
+                            </span>
+                            <span th:text="${#temporals.format(task.getTaskInfo().getCompleteTime(), 'dd-MM-yyyy HH:mm:ss')}">
+                                Complete date
+                            </span>
+                        </td>
+                        <td>Max mark: <span th:text="${task.getTaskInfo().getMaxMark()}"> Max Mark </span></td>
+                        <!--<td>My mark: <span th:text="${task.getMaxMark()}"> My Mark </span></td>-->
+                    </tr>
+                    <tr th:if="${canEdit}">
+                        <td>
+                            <form action="#"
+                                  th:action= "@{'/course/{idCourse}/tasks/edit/{idTask}'(idCourse=${course.getId()}, idTask=${task.getId()})}"
+                                  th:method="get" >
+                                <input type="hidden" name="_method" value="get" />
+                                <button type="submit" id="editTaskButton">Edit</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="#"
+                                  th:action= "@{'/course/{idCourse}/tasks/delete/{idTask}'(idCourse=${course.getId()}, idTask=${task.getId()})}"
+                                  th:method="delete" >
+                                <input type="hidden" name="_method" value="delete" />
+                                <button type="submit" id="deleteTaskButton">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

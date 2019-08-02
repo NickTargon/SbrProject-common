@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Getting Started</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{'/course/{idCourse}'(idCourse=${course.getId()})}">Назад</a></p>
+<h2>Course</h2>
+<div>
+    <span th:text="${course.caption}"></span>
+</div>
+<div>
+    <form th:action="@{'/course/{idCourse}/users/add'(idCourse=${course.id})}" method="post">
+        <div>
+            <select th:name="userLogin">
+                <option th:each="user : ${allUsers}"
+                        th:value="${user.getLogin()}"
+                        th:text="${user.getLogin()}"></option>
+            </select>
+        </div>
+        <div>
+            <ul>
+                <li th:each="role : ${roles}">
+                    <input type="radio" th:name="userRole" th:value="${role}"/>
+                    <label th:text="${role}"></label>
+                </li>
+            </ul>
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div><input type="submit" value="Add user"/></div>
+    </form>
+</div>
+<div th:if="!${courseUsers.isEmpty()}">
+    <table>
+        <thead>
+        <tr>
+            <th> Login</th>
+            <th> Name</th>
+            <th> Surname</th>
+            <th> E-mail</th>
+            <th> Role</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cUser : ${courseUsers}">
+            <td><span th:text="${cUser.getUser().getLogin()}"> Login </span></td>
+            <td><span th:text="${cUser.getUser().getName()}"> Name </span></td>
+            <td><span th:text="${cUser.getUser().getSurname()}"> SurName </span></td>
+            <td><span th:text="${cUser.getUser().getEmail()}"> E-mail </span></td>
+            <td><span th:text="${cUser.getRole()}"> Role </span></td>
+            <td>
+                <form action="#"
+                      th:action="@{'/course/{idCourse}/users/{idCourseUser}'(idCourse=${course.getId()},
+                      idCourseUser=${cUser.getId()})}"
+                      th:method="delete">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" id="deleteButton">Delete from course</button>
+                </form>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://kit.fontawesome.com/ecd6486686.js"></script>
+
+    <title>Все задания</title>
+</head>
+<body>
+<div th:with="user = ${user}" th:include="fragments/navbar-simple"></div>
+
+<div class="container mt-5">
+    <h1>Мои задания</h1>
+    <div th:if="${!courses.isEmpty()}">
+        <div th:each="course : ${courses}" class="card m-2 col-md-12">
+            <div class="card-header bg-info text-white text-center lead">
+                Курс <span th:text="${course.getCaption()}"> </span>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th> Название</th>
+                        <th> Дата сдачи</th>
+                        <th> Максимальная оценка</th>
+                        <th> Смотреть</th>
+                    </tr>
+                    </thead>
+                    <tbody th:if="${!course.getTasks().isEmpty()}">
+                    <tr th:each="coursetask : ${course.getTasks()}">
+                        <td><span class="lead" th:text="${coursetask.getTitle()}"> Title </span></td>
+                        <td><span th:text="${#temporals.format(coursetask.getTaskInfo().getCompleteTime(),
+                        'dd-MM-yyyy HH-mm')}"> Compl time </span></td>
+                        <td><span th:text="${coursetask.getTaskInfo().getMaxMark()}"> Max mark </span></td>
+                        <td><a th:href="@{'/course/{idCourse}/tasks/{idTask}/{taskCaption}/{idUser}'
+                      (idCourse=${course.getId()}, idTask=${coursetask.getId()}, taskCaption=${coursetask.getTitle()},
+                      idUser=${user.getId()})}"><span> Подробнее </span></a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div class="card text-center" th:if="${courses.isEmpty()}">
+    <div class="card-body">
+        <p>Твой список заданий пока пуст</p>
+    </div>
+</div>
+</div>
+
+</body>
+<div th:replace="fragments/bottom"></div>
+</html>

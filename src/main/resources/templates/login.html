@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body background="/img/bckd1.jpg">
+<div class="modal-dialog text-center">
+    <div class="col-sm-9 main-section">
+        <div class="modal-content">
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                <p>Неверный логин или пароль, или же вы забыли активировать аккаунт :(</p>
+                <form action="/sendcode" method="post" class="form-control alert-danger">
+                    <input type="text" name="login" class="form-control" style="margin-bottom: 5px"
+                           placeholder="Логин"/>
+                    <input type="submit"
+                           value="Активировать аккаунт" class="btn btn-primary btn-info"/>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                </form>
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-primary" role="alert">
+                <p>Вы вышли из аккаунта</p>
+            </div>
+            <div th:if="${active}" class="alert alert-success" role="alert">
+                <p th:text="${active}"></p>
+            </div>
+            <div class="col-12 user-img">
+                <img src="/img/login-cat.png"/>
+            </div>
+            <div class="col-12">
+                <h3 class="lead" style="color: white">EDUClassroom</h3>
+            </div>
+            <div class="col-12 form-input">
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" placeholder="Login" required/>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required/>
+                    </div>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-primary">Войти</button>
+                </form>
+            </div>
+            <div class="col-12">
+                <span style="color: white">Еще не зарегистрированы? Вам <a th:href="@{/registration}">сюда</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit task</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    </form>
+</div>
+<p><a th:href="@{/}">Start page</a></p>
+<p><a th:href="@{'/course/{id}/tasks'(id=${course.getId()})}">Back</a></p>
+<div>
+    <form
+            th:action= "@{'/course/{id}/tasks/edit/{idTask}'(id=${course.getId()}, idTask=${task.getId()})}"
+            th:method="post">
+        <div><label> Title: <input type="text" name="title" th:value="${task.getTitle()}"/> </label></div>
+        <div><label> Text: <textarea type="text" name="text" th:text="${task.getText()}"></textarea></label></div>
+        <div><label> Max mark: <input type="number" name="maxMark" th:text="${task.getTaskInfo().getMaxMark()}"/></label></div>
+        <!--<div><label> Text: <input type="datetime-local" name="completeTime" th:text="${task.getCompleteTime()}"/></label></div>-->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div><input type="submit" value="Edit"/></div>
+    </form>
+</div>
+
+</body>
+</html>

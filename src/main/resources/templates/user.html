@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://kit.fontawesome.com/ecd6486686.js"></script>
+
+    <title>EDUClassroom</title>
+</head>
+<body>
+<div th:with="user = ${user}" th:include="fragments/navbar-simple"></div>
+
+<div class="container mt-5">
+    <h1>Мой профиль</h1>
+    <div class="row">
+        <div class="card m-2 col-md-7">
+            <div class="card-header bg-info text-white text-center lead">
+                <span th:text="${user.getLogin()}"> </span>
+            </div>
+            <table class="table table-striped ">
+                <tbody>
+                <tr>
+                    <td><span>Имя</span></td>
+                    <td><span th:text="${user.getName()}"></span></td>
+                </tr>
+                <tr>
+                    <td><span>Фамилия</span></td>
+                    <td><span th:text="${user.getSurname()}"></span></td>
+                </tr>
+                <tr>
+                    <td><span>E-mail</span></td>
+                    <td><span th:text="${user.getEmail()}"></span></td>
+                </tr>
+                <tr>
+                    <td><span>Телефон</span></td>
+                    <td><span th:text="${user.getPhone()}"></span></td>
+                </tr>
+                <tr>
+                    <td><span>Дата регистрации</span></td>
+                    <td><span th:text="${#temporals.format(user.getRegdate(), 'dd-MM-yyyy')}"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card m-2 text-center col-md-4">
+            <div class="card-header bg-info text-white lead">
+                <span>Новые данные:</span>
+            </div>
+            <form th:action="@{/user}" method="post" class="m-1">
+                <div class="form-group">
+                    <label class="control-label label">
+                        <input type="text" name="name" placeholder="Имя" class="form-control col-xs-10" th:value="${user.getName()}" required/>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label label">
+                        <input type="text" name="surname" placeholder="Фамилия" class="form-control col-xs-10" th:value="${user.getSurname()}" required/>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label label">
+                        <input type="email" name="email" placeholder="E-mail" class="form-control col-xs-10" th:value="${user.getEmail()}" required/>
+                    </label>
+                </div>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div><input type="submit" value="Поменять данные" class="btn btn-primary col-xs-2"/></div>
+            </form>
+            <button type="button" class="btn btn-light text-danger" data-toggle="modal" data-target="#deleteUserModalDialog">
+                Удалить свой профиль</button>
+            <!--<a th:href="@{/user/delete}" class="text-center">Удалить аккаунт</a>-->
+            <div class="modal fade text-center" id="deleteUserModalDialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" style="color: white">Вы уверены, что хотите удалить аккаунт?
+                                Отменить действие будет невозможно, доступ ко всем курсам будет утерян.</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="/user/delete" method="post">
+                            <div class="modal-body">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                                <input type="submit" id="deleteAccButton"
+                                       value="Я уверен и я хочу удалить свой аккаунт" class="btn btn-primary btn-danger"/>
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+</body>
+<div th:replace="fragments/bottom"></div>
+</html>
